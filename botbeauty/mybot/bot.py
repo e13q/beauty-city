@@ -1,7 +1,7 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, LabeledPrice
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
 from .models import Saloon, Procedure, Master
-from .token import BOT_TOKEN
+from .token import BOT_TOKEN, PAYMENT_PROVIDER_TOKEN
 
 
 def start(update: Update, context: CallbackContext):
@@ -25,10 +25,34 @@ def start(update: Update, context: CallbackContext):
     update.message.reply_text('Выберите опцию:', reply_markup=reply_markup)
 
 
+def pay(update: Update, context: CallbackContext):
+    chat_id = update.message.chat_id
+    title = "Тестовая оплата"
+    description = "Оплата услуг салона Beauty-City"
+    payload = "Стрижка машинкой"
+    currency = "RUB"
+    prices = [LabeledPrice("Тестовая оплата", 10000)]
+
+    provide_token = context.bot_data['provide_token']# Цена в копейках
+
+    context.bot.send_invoice(
+        chat_id=chat_id,
+        title=title,
+        description=description,
+        payload=payload,
+        provider_token=provide_token,
+        currency=currency,
+        prices=prices,
+        start_parameter="test-payment",
+        need_name=True,
+        need_phone_number=True,
+    )
+
+
 def button(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
-    
+
     if query.data.startswith('procedure_'):
         procedure_id = int(query.data.split('_')[1])
         procedure = Procedure.objects.get(id=procedure_id)
@@ -110,7 +134,10 @@ def master_list():
 def main():
     updater = Updater(BOT_TOKEN, use_context=True)
 
+    updater.dispatcher.bot_data['provide_token'] = PAYMENT_PROVIDER_TOKEN
+
     updater.dispatcher.add_handler(CommandHandler('start', start))
+    updater.dispatcher.add_handler(CommandHandler('pay', pay))
     updater.dispatcher.add_handler(CallbackQueryHandler(button))
 
     updater.start_polling()

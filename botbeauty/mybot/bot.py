@@ -33,7 +33,7 @@ def pay(update: Update, context: CallbackContext):
     currency = "RUB"
     prices = [LabeledPrice("Тестовая оплата", 10000)]
 
-    provide_token = context.bot_data['provide_token']# Цена в копейках
+    provide_token = context.bot_data['provide_token']  # Цена в копейках
 
     context.bot.send_invoice(
         chat_id=chat_id,

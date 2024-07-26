@@ -5,10 +5,6 @@ from django.core.exceptions import ValidationError
 import datetime
 
 
-from django.db import models
-from phonenumber_field.modelfields import PhoneNumberField
-
-
 class Client(models.Model):
     """Клиент"""
 

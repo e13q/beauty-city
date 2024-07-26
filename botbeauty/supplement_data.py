@@ -18,6 +18,15 @@ def generate_phone_number():
 def generate_url():
     return f"https://example.com/receipt/{uuid.uuid4()}"
 
+# TODO Нужо протестировать. (Обновленная функция, чтобы даты были с 2020 по 2025)
+# def generate_date():
+#     start_date = datetime(2020, 1, 1)
+#     end_date = datetime(2024, 12, 31)
+#     delta = end_date - start_date
+#     random_days = random.randint(0, delta.days)
+#     random_date = start_date + timedelta(days=random_days)
+#     return random_date.strftime("%Y-%m-%d")
+
 
 def generate_date():
     return f"2024-08-{random.randint(1, 31):02d}"

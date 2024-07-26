@@ -1,19 +1,22 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, LabeledPrice
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
-from .models import Saloon, Procedure, Master
+from .models import Salon, Service, Specialist, SpecialistWorkDayInSalon
+ADMIN_PHONE_NUMBER = "+7(902)9000111"
+DESCRIPTION = "Тут будет описание"
+import datetime
 from .token import BOT_TOKEN, PAYMENT_PROVIDER_TOKEN
 
 
 def start(update: Update, context: CallbackContext):
     keyboard = [
         [
-            InlineKeyboardButton("Процедуры", callback_data='procedures'),
+            InlineKeyboardButton("Процедуры", callback_data='services'),
         ],
         [
             InlineKeyboardButton("Салоны", callback_data='salons')
         ],
         [
-            InlineKeyboardButton("Мастера", callback_data='masters'),
+            InlineKeyboardButton("Мастера", callback_data='specialists'),
         ],
         [
             InlineKeyboardButton("О нас", callback_data='about'),
@@ -33,7 +36,7 @@ def pay(update: Update, context: CallbackContext):
     currency = "RUB"
     prices = [LabeledPrice("Тестовая оплата", 10000)]
 
-    provide_token = context.bot_data['provide_token']  # Цена в копейках
+    provide_token = context.bot_data['provide_token']# Цена в копейках
 
     context.bot.send_invoice(
         chat_id=chat_id,
@@ -53,34 +56,45 @@ def button(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
 
-    if query.data.startswith('procedure_'):
-        procedure_id = int(query.data.split('_')[1])
-        procedure = Procedure.objects.get(id=procedure_id)
+    if query.data.startswith('service_'):
+        service_id = int(query.data.split('_')[1])
+        service = Service.objects.get(id=service_id)
         query.edit_message_text(
-            text=f"Процедура: {procedure.name}\nОписание: {procedure.description}\nЦена: {procedure.price}"
+            text=f"Процедура: {service.title}\nОписание: {DESCRIPTION}\nЦена: {service.price}"
             )
 
     elif query.data.startswith('salon_'):
         salon_id = int(query.data.split('_')[1])
-        salon = Saloon.objects.get(id=salon_id)
+        salon = Salon.objects.get(id=salon_id)
         query.edit_message_text(
-            text=f"Салон: {salon.name}\nАдрес: {salon.adress}\nТелефон: {salon.phone}"
+            text=f"Салон: {salon.title}\nАдрес: {salon.address}\nТелефон: {ADMIN_PHONE_NUMBER}"
             )
 
     elif query.data.startswith('master_'):
         master_id = int(query.data.split('_')[1])
-        master = Master.objects.get(id=master_id)
-        procedures = master.procedures.all()
-        procedures_list = "\n".join([proc.name for proc in procedures])
+        master = Specialist.objects.get(id=master_id)
+        workdays = SpecialistWorkDayInSalon.objects.filter(
+            id=master_id
+        )
+        if not workdays:
+            query.edit_message_text(
+                text="Нет доступных процедур"
+            )
+        #!!!
+        services_list = []
+        for workday in workdays:
+            [services_list.append(proc.title) for proc in workday.services.all()]        
+        services_dict = list(dict.fromkeys(services_list))
+        services_str = "\n".join([proc for proc in services_dict])
         query.edit_message_text(
-            text=f"Мастер: {master.name}\nПроцедуры:\n{procedures_list}"
+            text=f"Мастер: {master.full_name}\nПроцедуры:\n{services_str}"
             )
 
-    elif query.data == 'procedures':
+    elif query.data == 'services':
         keyboard = [
             [
-                InlineKeyboardButton(name, callback_data=f'procedure_{id}')
-                for id, name in procedure_list()
+                InlineKeyboardButton(name, callback_data=f'service_{id}')
+                for id, name in service_list()
                 ]
                 ]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -91,8 +105,8 @@ def button(update: Update, context: CallbackContext):
     elif query.data == 'salons':
         keyboard = [
             [
-                InlineKeyboardButton(name, callback_data=f'salon_{id}')
-                for id, name in salon_list()
+                InlineKeyboardButton(title, callback_data=f'salon_{id}')
+                for id, title in salon_list()
                 ]
                 ]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -100,11 +114,11 @@ def button(update: Update, context: CallbackContext):
             text="Выберите салон:", reply_markup=reply_markup
             )
 
-    elif query.data == 'masters':
+    elif query.data == 'specialists':
         keyboard = [
             [
-                InlineKeyboardButton(name, callback_data=f'master_{id}')
-                for id, name in master_list()
+                InlineKeyboardButton(full_name, callback_data=f'master_{id}')
+                for id, full_name in master_list()
                 ]
                 ]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -117,29 +131,26 @@ def button(update: Update, context: CallbackContext):
 
 
 def salon_list():
-    salons = Saloon.objects.all()
-    return [(salon.id, salon.name) for salon in salons]
+    salons = Salon.objects.all()
+    return [(salon.id, salon.title) for salon in salons]
 
 
-def procedure_list():
-    procedures = Procedure.objects.all()
-    return [(procedure.id, procedure.name) for procedure in procedures]
+def service_list():
+    services = Service.objects.all()
+    return [(service.id, service.title) for service in services]
 
 
 def master_list():
-    masters = Master.objects.all()
-    return [(master.id, master.name) for master in masters]
+    specialists = Specialist.objects.all()
+    return [(specialist.id, specialist.full_name) for specialist in specialists]
 
 
 def main():
     updater = Updater(BOT_TOKEN, use_context=True)
-
     updater.dispatcher.bot_data['provide_token'] = PAYMENT_PROVIDER_TOKEN
-
     updater.dispatcher.add_handler(CommandHandler('start', start))
-    updater.dispatcher.add_handler(CommandHandler('pay', pay))
+    #updater.dispatcher.add_handler(CommandHandler('pay', pay))
     updater.dispatcher.add_handler(CallbackQueryHandler(button))
-
     updater.start_polling()
     updater.idle()
 

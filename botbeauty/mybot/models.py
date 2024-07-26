@@ -1,8 +1,5 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
-from django.db.models import Q
-from django.core.exceptions import ValidationError
-import datetime
 
 
 class Client(models.Model):
@@ -57,7 +54,7 @@ class Order(models.Model):
         ("cancel", "Отменено"),
     ]
     client = models.ForeignKey(
-        Client, on_delete=models.CASCADE, verbose_name="Клиент"
+        Client, on_delete=models.PROTECT, verbose_name="Клиент"
     )
     status = models.CharField("Статус заказа", max_length=14, choices=STATUS)
     receipt = models.URLField("Чек", blank=True)

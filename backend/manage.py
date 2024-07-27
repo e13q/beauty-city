@@ -12,6 +12,7 @@ def main():
     os.environ.setdefault('DJANGO_SECRET_KEY', env('DJANGO_SECRET_KEY'))
     os.environ.setdefault('DJANGO_DEBUG', env.bool('DJANGO_DEBUG'))
     os.environ.setdefault('BOT_TOKEN', env('BOT_TOKEN'))
+    os.environ.setdefault('ALLOWED_HOSTS', env('ALLOWED_HOSTS'))
     os.environ.setdefault('PAYMENT_PROVIDER_TOKEN', env('PAYMENT_PROVIDER_TOKEN'))
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
     try:

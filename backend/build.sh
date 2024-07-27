@@ -6,4 +6,4 @@ pip install gunicorn
 pip install uvicorn
 
 # Apply any outstanding database migrations
-python backend/manage.py migrate
+python manage.py migrate

@@ -14,8 +14,6 @@ from datacenter.models import Salon, Service, Specialist, SpecialistWorkDayInSal
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
-BOT_TOKEN = os.environ.get('BOT_TOKEN')
 PAYMENT_PROVIDER_TOKEN = os.environ.get('PAYMENT_PROVIDER_TOKEN')
 
 

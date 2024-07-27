@@ -6,17 +6,17 @@ from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, Callback
 from django.utils import timezone
 from datetime import datetime, timedelta
 
-from datacenter.models import Client, Salon,Service, Appointment, Order
-from django.conf import settings
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, LabeledPrice
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
+from datacenter.models import Salon, Service, Specialist, SpecialistWorkDayInSalon
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'beauty_salon.settings')
-django.setup()
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-CHOOSE_DATE, CHOOSE_TIME, CONFIRM_ORDER = range(3)
+BOT_TOKEN = os.environ.get('BOT_TOKEN')
+PAYMENT_PROVIDER_TOKEN = os.environ.get('PAYMENT_PROVIDER_TOKEN')
 
 
 def start(update: Update, context: CallbackContext):

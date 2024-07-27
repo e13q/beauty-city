@@ -7,7 +7,6 @@ from mybot.models import Client, Salon, Service, Specialist, Order, SpecialistWo
 # # ! запуск через PowerShell команда - >>> exec(open("supplement_data.py", encoding="utf-8").read())
 
 
-
 clients = [
     {"id_tg": 224, "full_name": "Иван", "phone_number": "+79699998121"},
     {"id_tg": 225, "full_name": "Мария", "phone_number": "+79686758122"},
@@ -20,7 +19,15 @@ clients = [
     {"id_tg": 232, "full_name": "Дарья", "phone_number": "+79634567123"},
     {"id_tg": 233, "full_name": "Светлана", "phone_number": "+79687998123"},
     {"id_tg": 234, "full_name": "Максим", "phone_number": "+79631238123"},
-    {"id_tg": 235, "full_name": "Анна", "phone_number": "+79665828123"}
+    {"id_tg": 235, "full_name": "Анна", "phone_number": "+79665828123"},
+    {"id_tg": 236, "full_name": "Олег", "phone_number": "+79624356123"},
+    {"id_tg": 237, "full_name": "Татьяна", "phone_number": "+79657899123"},
+    {"id_tg": 238, "full_name": "Юлия", "phone_number": "+79681234123"},
+    {"id_tg": 239, "full_name": "Дмитрий", "phone_number": "+79667587123"},
+    {"id_tg": 240, "full_name": "Алина", "phone_number": "+79609877123"},
+    {"id_tg": 241, "full_name": "Николай", "phone_number": "+79621432123"},
+    {"id_tg": 242, "full_name": "Виктория", "phone_number": "+79632678123"},
+    {"id_tg": 243, "full_name": "Константин", "phone_number": "+79643218123"}
 ]
 
 client_objects = [Client.objects.create(**client) for client in clients]
@@ -59,12 +66,8 @@ specialist_objects = [Specialist.objects.create(**specialist) for specialist in 
 
 
 orders = [
-    {"client": client_objects[0], "status": 'paid', "receipt": 'https://www.google.com'},
-    {"client": client_objects[1], "status": 'waiting', "receipt": 'https://www.yandex.ru'},
-    {"client": client_objects[2], "status": 'cancel', "receipt": 'https://www.mail.ru'},
-    {"client": client_objects[3], "status": 'paid', "receipt": 'https://www.example.com'},
-    {"client": client_objects[4], "status": 'waiting', "receipt": 'https://www.example.org'},
-    {"client": client_objects[5], "status": 'cancel', "receipt": 'https://www.example.net'}
+    {"client": client_objects[i], "status": status, "receipt": f'https://www.example.com/receipt{i}'}
+    for i, status in enumerate(['paid', 'waiting', 'cancel'] * (len(client_objects) // 3))
 ]
 
 order_objects = [Order.objects.create(**order) for order in orders]
@@ -85,14 +88,58 @@ for i in range(10):
 
 appointments = []
 for i, workday in enumerate(workdays):
-    appointments.extend([
-        {"status": 'access', "date": workday.workday, "salon": workday.salon, "client": client_objects[i % len(client_objects)], "specialist": workday.specialist, "service": service_objects[0], "start_at": '09:00', "order": order_objects[i % len(order_objects)]},
-        {"status": 'ended', "date": workday.workday, "salon": workday.salon, "client": client_objects[(i + 1) % len(client_objects)], "specialist": workday.specialist, "service": service_objects[1], "start_at": '11:00', "order": order_objects[(i + 1) % len(order_objects)]},
-        {"status": 'discard', "date": workday.workday, "salon": workday.salon, "client": client_objects[(i + 2) % len(client_objects)], "specialist": workday.specialist, "service": service_objects[2], "start_at": '13:00', "order": order_objects[(i + 2) % len(order_objects)]},
-        {"status": 'access', "date": workday.workday, "salon": workday.salon, "client": client_objects[(i + 3) % len(client_objects)], "specialist": workday.specialist, "service": service_objects[3], "start_at": '15:00', "order": order_objects[(i + 3) % len(order_objects)]},
-        {"status": 'ended', "date": workday.workday, "salon": workday.salon, "client": client_objects[(i + 4) % len(client_objects)], "specialist": workday.specialist, "service": service_objects[0], "start_at": '17:00', "order": order_objects[(i + 4) % len(order_objects)]},
-        {"status": 'discard', "date": workday.workday, "salon": workday.salon, "client": client_objects[(i + 5) % len(client_objects)], "specialist": workday.specialist, "service": service_objects[1], "start_at": '18:00', "order": order_objects[(i + 5) % len(order_objects)]}
-    ])
+    services_offered = list(workday.services.all())
+    for k in range(2):
+        appointment = {
+            "status": ['access', 'ended'][(i + k) % 2],
+            "date": workday.workday,
+            "salon": workday.salon,
+            "client": client_objects[(i * 3 + k) % len(client_objects)],
+            "specialist": workday.specialist,
+            "service": services_offered[k % len(services_offered)],
+            "start_at": f'{10 + k}:00',
+            "order": order_objects[(i * 3 + k) % len(order_objects)]
+        }
+        appointments.append(appointment)
+
+    if i < 5:  # Только для первых пяти дней
+        appointment = {
+            "status": "ended",
+            "date": f'2024-07-{20 + i}',  # Даты в прошлом
+            "salon": workday.salon,
+            "client": client_objects[(i * 3 + 2) % len(client_objects)],
+            "specialist": workday.specialist,
+            "service": services_offered[2 % len(services_offered)],
+            "start_at": '14:00',
+            "order": order_objects[(i * 3 + 2) % len(order_objects)]
+        }
+        appointments.append(appointment)
+
+# Добавление нескольких отменённых заказов с прошлыми датами
+past_appointments = [
+    {
+        "status": "cancel",
+        "date": "2024-07-20",
+        "salon": salon_objects[0],
+        "client": client_objects[0],
+        "specialist": specialist_objects[0],
+        "service": service_objects[0],
+        "start_at": "10:00",
+        "order": order_objects[0]
+    },
+    {
+        "status": "cancel",
+        "date": "2024-07-21",
+        "salon": salon_objects[1],
+        "client": client_objects[1],
+        "specialist": specialist_objects[1],
+        "service": service_objects[1],
+        "start_at": "11:00",
+        "order": order_objects[1]
+    }
+]
+
+appointments.extend(past_appointments)
 
 for appointment in appointments:
     Appointment.objects.create(**appointment)

@@ -1,9 +1,10 @@
 from django.core.management.base import BaseCommand
-from telegram_bot import bot
+from telegram_bot.bot import main
 
 
 class Command(BaseCommand):
-    help_text = 'Запуск бота'
+    help = 'Запуск бота для управления салоном красоты'
 
     def handle(self, *args, **kwargs):
-        bot.main()
+        self.stdout.write("Запуск бота...")
+        main()

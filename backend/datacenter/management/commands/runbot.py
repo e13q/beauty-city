@@ -1,9 +1,9 @@
 from django.core.management.base import BaseCommand
-from mybot.bot import main
+from telegram_bot import bot
 
 
 class Command(BaseCommand):
     help_text = 'Запуск бота'
-    
+
     def handle(self, *args, **kwargs):
-        main()
+        bot.main()

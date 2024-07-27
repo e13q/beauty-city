@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class MybotConfig(AppConfig):
+class DatacenterConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'mybot'
+    name = 'datacenter'

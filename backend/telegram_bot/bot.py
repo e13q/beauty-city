@@ -1,10 +1,16 @@
+import os
+
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, LabeledPrice
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
-from .models import Salon, Service, Specialist, SpecialistWorkDayInSalon
+from datacenter.models import Salon, Service, Specialist, SpecialistWorkDayInSalon
+
+
 ADMIN_PHONE_NUMBER = "+7(902)9000111"
 DESCRIPTION = "Тут будет описание"
-import datetime
-from .token import BOT_TOKEN, PAYMENT_PROVIDER_TOKEN
+
+
+BOT_TOKEN = os.environ.get('BOT_TOKEN')
+PAYMENT_PROVIDER_TOKEN = os.environ.get('PAYMENT_PROVIDER_TOKEN')
 
 
 def start(update: Update, context: CallbackContext):

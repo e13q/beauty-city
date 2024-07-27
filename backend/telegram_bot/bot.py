@@ -1,16 +1,19 @@
 import os
 
+from environs import Env
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, LabeledPrice
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
 from datacenter.models import Salon, Service, Specialist, SpecialistWorkDayInSalon
 
+env = Env()
+env.read_env()
 
 ADMIN_PHONE_NUMBER = "+7(902)9000111"
 DESCRIPTION = "Тут будет описание"
 
 
-BOT_TOKEN = os.environ.get('BOT_TOKEN')
-PAYMENT_PROVIDER_TOKEN = os.environ.get('PAYMENT_PROVIDER_TOKEN')
+BOT_TOKEN = env('BOT_TOKEN')
+PAYMENT_PROVIDER_TOKEN = env('PAYMENT_PROVIDER_TOKEN')
 
 
 def start(update: Update, context: CallbackContext):

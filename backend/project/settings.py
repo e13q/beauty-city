@@ -19,7 +19,7 @@ env.read_env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-BOT_TOKEN=os.environ.get('BOT_TOKEN')
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -30,6 +30,8 @@ SECRET_KEY = env('DJANGO_SECRET_KEY')
 DEBUG = env('DJANGO_DEBUG')
 
 ALLOWED_HOSTS = json.loads(env('ALLOWED_HOSTS'))
+CSRF_TRUSTED_ORIGINS = json.loads(env('CROSS_OR'))
+CORS_ORIGIN_WHITELIST = json.loads(env('CROSS_OR'))
 
 
 # Application definition
@@ -122,7 +124,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+
+STATIC_URL = "/static/"
+#STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

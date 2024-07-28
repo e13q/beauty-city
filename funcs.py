@@ -1,7 +1,7 @@
 import datetime as dt
 
 
-def get_first_time_slot_and_qty(duty, service_duration):
+def get_first_time_slot(duty):
     time_now_hour = dt.datetime.now().hour
     time_now_minute = dt.datetime.now().minute
     if time_now_minute > 30:
@@ -18,17 +18,12 @@ def get_first_time_slot_and_qty(duty, service_duration):
 
     if time_now < duty_start_time:
         first_time_slot = duty_start_time
-        free_time_slots_qty = (duty_end_time - duty_start_time) // (
-            service_duration
-        )
-    elif time_now < duty_end_time and time_now >= duty_start_time:
+    elif duty_start_time <= time_now < duty_end_time:
         first_time_slot = time_now
-        free_time_slots_qty = (duty_end_time - time_now) // service_duration
     else:
         first_time_slot = None
-        free_time_slots_qty = 0
 
-    return first_time_slot, free_time_slots_qty
+    return first_time_slot
 
 
 def is_time_slot_busy(time_slot, appointments, service_duration):
@@ -68,19 +63,13 @@ def get_salons_and_times(specialist, service, date, salon=None):
         ).exclude(status__in=["discard", "ended"])
 
         duty_end_time = dt.datetime.combine(duty.workday, duty.end_at)
-        first_time_slot, free_time_slots_qty = get_first_time_slot_and_qty(
-            duty, service_duration
-        )
 
         free_time_slots = []
-        time_slot = first_time_slot
-        for _ in range(free_time_slots_qty + 1):
-            if (
-                not is_time_slot_busy(
+        time_slot = get_first_time_slot(duty)
+        while time_slot + service_duration < duty_end_time:
+            if not is_time_slot_busy(
                     time_slot, appointments, service_duration
-                )
-                and time_slot + service_duration < duty_end_time
-            ):
+                ):
                 free_time_slots.append(f"{time_slot.hour:02}:{time_slot.minute:02}")
             time_slot += service_duration
 

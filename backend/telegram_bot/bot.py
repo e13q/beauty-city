@@ -352,8 +352,9 @@ def back_to_time(update: Update, context: CallbackContext):
 def send_notifications():
     bot = Bot(token=settings.BOT_TOKEN)
     hundred_days_ago = timezone.now() - timedelta(days=100)
-    clients_to_notify = Order.created_at.filter(created_at__lte=hundred_days_ago)
-    for client in clients_to_notify:
+    orders_to_notify = Order.created_at.filter(created_at__lte=hundred_days_ago)
+    for order in orders_to_notify:
+        client = order.client
         bot.send_message(
             chat_id=client.id_tg, text='100 дней прошло, давай опять в салон'
         )

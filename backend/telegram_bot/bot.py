@@ -1,4 +1,6 @@
 import logging
+import schedule
+import time
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, Bot
 from telegram.ext import (
     Updater, CommandHandler,
@@ -36,7 +38,7 @@ def main_menu(update: Update, context: CallbackContext):
     ]
     query = update.callback_query
     if query:
-        query.answer()   
+        query.answer()
         query.edit_message_text(
             'Привет! Пожалуйста, выберите салон или услугу',
             reply_markup=InlineKeyboardMarkup(keyboard)
@@ -350,14 +352,23 @@ def back_to_time(update: Update, context: CallbackContext):
 def send_notifications():
     bot = Bot(token=settings.BOT_TOKEN)
     hundred_days_ago = timezone.now() - timedelta(days=100)
-    clients_to_notify = Client.objects.filter(created_at__lte=hundred_days_ago)
+    clients_to_notify = Order.created_at.filter(created_at__lte=hundred_days_ago)
     for client in clients_to_notify:
         bot.send_message(
             chat_id=client.id_tg, text='100 дней прошло, давай опять в салон'
         )
 
 
+def schedule_notifications():
+    schedule.every().day.at("12:00").do(send_notifications)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+
 def main():
+    schedule_notifications()
+
     updater = Updater(settings.BOT_TOKEN, use_context=True)
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler('start', start)],

@@ -125,6 +125,30 @@ def salon_handler(update: Update, context: CallbackContext):
     return CHOOSE_DATE
 
 
+def specialists_handler(update: Update, context: CallbackContext):
+    query = update.callback_query
+    query.answer()
+    specialist_id = query.data.split("_")[1]
+    context.user_data["specialist_id"] = specialist_id
+    services = Service.objects.all()
+    keyboard = [
+        [
+            InlineKeyboardButton(
+                f"{service.title} - {service.price} руб.",
+                callback_data=f"service_{service.id}",
+            )
+            for service in services
+        ]
+    ]
+    keyboard.append(
+        [InlineKeyboardButton("Назад", callback_data="list_services")]
+    )
+    query.edit_message_text(
+        text="Выберите услугу:", reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+    return CHOOSE_DATE
+
+
 def contact_admin(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
@@ -352,6 +376,9 @@ def main():
     )
     updater.dispatcher.add_handler(
         CallbackQueryHandler(salon_handler, pattern='^salon_')
+    )
+    updater.dispatcher.add_handler(
+        CallbackQueryHandler(specialists_handler, pattern="^specialists_")
     )
     updater.dispatcher.add_handler(
         CallbackQueryHandler(back_to_main_menu, pattern='^main_menu$')

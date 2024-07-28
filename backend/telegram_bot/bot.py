@@ -22,19 +22,34 @@ logger = logging.getLogger(__name__)
 CHOOSE_DATE, CHOOSE_TIME, CONFIRM_ORDER = range(3)
 
 
-def start(update: Update, context: CallbackContext):
-    # Точка старта
+def main_menu(update: Update, context: CallbackContext):
     keyboard = [
         [InlineKeyboardButton(
-            'Список салонов', callback_data='list_salons'
+            "Список салонов", callback_data="list_salons"
         )],
         [InlineKeyboardButton(
-            'Список процедур', callback_data='list_specialists'
+            "Список процедур", callback_data="list_specialists"
         )],
         [InlineKeyboardButton(
-            'Записаться к мастеру', callback_data='list_services'
+            "Записаться к мастеру", callback_data="list_services"
         )]
     ]
+    query = update.callback_query
+    if query:
+        query.answer()   
+        query.edit_message_text(
+            'Привет! Пожалуйста, выберите салон или услугу',
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+    else:
+        update.message.reply_text(
+            'Привет! Пожалуйста, выберите салон или услугу',
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+
+
+def start(update: Update, context: CallbackContext):
+    # Точка старта
     chat_id = update.message.chat.id
     if not Client.objects.filter(id_tg=chat_id).exists():
         Client.objects.create(
@@ -42,9 +57,7 @@ def start(update: Update, context: CallbackContext):
             full_name="Unknown",
             phone_number=None
         )
-    update.message.reply_text(
-        'Привет! Пожалуйста, выберите салон или услугу', reply_markup=keyboard
-    )
+    main_menu(update=update, context=CallbackContext)
     return ConversationHandler.END
 
 
@@ -155,7 +168,7 @@ def contact_admin(update: Update, context: CallbackContext):
     admin_contact_info = "Связь с администратором по телефону: +7 123 456 78 90 или по email: admin@example.com"
     query.edit_message_text(
         text=admin_contact_info,
-        reply_markup=back_to_main_menu_keyboard()
+        reply_markup=main_menu(update=update, context=CallbackContext)
     )
 
 
@@ -381,7 +394,7 @@ def main():
         CallbackQueryHandler(specialists_handler, pattern="^specialists_")
     )
     updater.dispatcher.add_handler(
-        CallbackQueryHandler(back_to_main_menu, pattern='^main_menu$')
+        CallbackQueryHandler(main_menu, pattern='^main_menu$')
     )
     updater.dispatcher.add_handler(
         CallbackQueryHandler(back_to_service, pattern='^service_back$')

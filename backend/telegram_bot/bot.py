@@ -1,6 +1,4 @@
 import logging
-import os
-import django
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, Bot
 from telegram.ext import (
     Updater, CommandHandler,
@@ -14,9 +12,6 @@ from datacenter.models import (
 )
 
 from django.conf import settings
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'beauty_salon.settings')
-django.setup()
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',

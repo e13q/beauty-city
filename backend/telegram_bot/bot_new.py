@@ -1,6 +1,5 @@
 import datetime as dt
 import logging
-
 from datacenter.models import (
     Appointment,
     Client,
@@ -20,6 +19,14 @@ from telegram.ext import (
     Updater,
 )
 
+from .start_from_procedures import (
+    list_services,
+    service_update_date_up,
+    service_update_date_down,
+    service_update_salon_up,
+    service_update_salon_down,
+    list_salons_by_procedure
+)
 from .common import get_salons_and_times
 
 logging.basicConfig(
@@ -36,7 +43,11 @@ def start(update: Update, context: CallbackContext):
                 "Список процедур", callback_data="list_services"
             )
         ],
-        [InlineKeyboardButton("Список салонов", callback_data="list_salons")],
+        [
+            InlineKeyboardButton(
+                "Список салонов", callback_data="list_salons"
+            )
+        ],
         [
             InlineKeyboardButton(
                 "Записаться к мастеру", callback_data="list_specialists"
@@ -57,35 +68,27 @@ def start(update: Update, context: CallbackContext):
         )
 
 
-def list_services(update: Update, context: CallbackContext):
-    query = update.callback_query
-    query.answer()
-    services = Service.objects.all()
-    keyboard = [
-        [
-            InlineKeyboardButton(
-                f"{service.title} - {service.price} руб.",
-                callback_data=f"service_{service.id}",
-            )
-            for service in services
-        ]
-    ]
-    keyboard.append([InlineKeyboardButton("Назад", callback_data="start")])
-    query.edit_message_text(
-        text="Выберите услугу:", reply_markup=InlineKeyboardMarkup(keyboard)
-    )
 
 
-def service_handler(update, context):
+
+def service_handler(update: Update, context: CallbackContext):
+    # По выбранной процедуре предоставляем выбор салонов
     query = update.callback_query
     query.answer()
     service_id = query.data.split("_")[-1]
     context.user_data["service_id"] = service_id
     if context.user_data.get("specialist_id"):
         list_salons_free_time_slots(update, context)
+    elif context.user_data.get("salon_id"):
+        None
+        # list_specialsts_by_salon_procedure(update, context)
+    else:
+        list_salons_by_procedure(update, context)
 
 
-def list_salons(update, context):
+
+# ----------------------Старт второй линии действий----------------------
+def list_salons(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
     salons = Salon.objects.all()
@@ -95,8 +98,7 @@ def list_salons(update, context):
                 f"{salon.title} - {salon.address}",
                 callback_data=f"salon_{salon.id}",
             )
-            for salon in salons
-        ]
+        ] for salon in salons
     ]
     keyboard.append([InlineKeyboardButton("Назад", callback_data="start")])
     query.edit_message_text(
@@ -104,7 +106,7 @@ def list_salons(update, context):
     )
 
 
-def salon_handler(update, context):
+def salon_handler(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
     salon_id = query.data.split("_")[-1]
@@ -112,7 +114,8 @@ def salon_handler(update, context):
     list_services(update, context)
 
 
-def list_specialists(update, context):
+# ----------------------Старт третьей линии действий----------------------
+def list_specialists(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
     specialists = Specialist.objects.all()
@@ -122,8 +125,7 @@ def list_specialists(update, context):
                 f"{specialist.full_name}",
                 callback_data=f"specialist_{specialist.id}",
             )
-            for specialist in specialists
-        ]
+        ] for specialist in specialists
     ]
     keyboard.append([InlineKeyboardButton("Назад", callback_data="start")])
     query.edit_message_text(
@@ -132,7 +134,7 @@ def list_specialists(update, context):
     )
 
 
-def specialists_handler(update, context):
+def specialists_handler(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
     specialist_id = query.data.split("_")[-1]
@@ -140,7 +142,7 @@ def specialists_handler(update, context):
     list_services(update, context)
 
 
-def list_salons_free_time_slots(update, context):
+def list_salons_free_time_slots(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
     chat_id = update.chat.id
@@ -160,11 +162,11 @@ def list_salons_free_time_slots(update, context):
                 InlineKeyboardButton(
                     time_slot, callback_data=f"time_slot_{time_slot}"
                 )
-                for time_slot in time_slots
-            ]
+            ] for time_slot in time_slots
         ]
         keyboard.append([InlineKeyboardButton("Назад", callback_data="start")])
-        context.bot.send_message(chat_id,
+        context.bot.send_message(
+            chat_id,
             text=f"{work_date}\n{salon_title}\n{salon_address}",
             reply_markup=InlineKeyboardMarkup(keyboard),
         )
@@ -172,7 +174,6 @@ def list_salons_free_time_slots(update, context):
 
 def main():
     updater = Updater(settings.BOT_TOKEN, use_context=True)
-
     updater.dispatcher.add_handler(CommandHandler("start", start))
     updater.dispatcher.add_handler(
         CallbackQueryHandler(start, pattern="^start$")
@@ -181,24 +182,34 @@ def main():
         CallbackQueryHandler(list_services, pattern="^list_services$")
     )
     updater.dispatcher.add_handler(
-        CallbackQueryHandler(service_handler, pattern="^service_")
-    )
-    updater.dispatcher.add_handler(
         CallbackQueryHandler(list_salons, pattern="^list_salons$")
-    )
-    updater.dispatcher.add_handler(
-        CallbackQueryHandler(salon_handler, pattern="^salon_")
     )
     updater.dispatcher.add_handler(
         CallbackQueryHandler(list_specialists, pattern="^list_specialists$")
     )
     updater.dispatcher.add_handler(
+        CallbackQueryHandler(service_handler, pattern="^service_")
+    )
+    updater.dispatcher.add_handler(
+        CallbackQueryHandler(list_services, pattern="^back_to_serv_")
+    )    
+    updater.dispatcher.add_handler(
+        CallbackQueryHandler(service_update_date_up, pattern="^date_up_")
+    )
+    updater.dispatcher.add_handler(
+        CallbackQueryHandler(service_update_date_down, pattern="^date_down_")
+    )
+    updater.dispatcher.add_handler(
+        CallbackQueryHandler(service_update_salon_up, pattern="^salon_up_")
+    )
+    updater.dispatcher.add_handler(
+        CallbackQueryHandler(service_update_salon_down, pattern="^salon_down_")
+    )
+    updater.dispatcher.add_handler(
+        CallbackQueryHandler(salon_handler, pattern="^salon_")
+    )
+    updater.dispatcher.add_handler(
         CallbackQueryHandler(specialists_handler, pattern="^specialist_")
     )
-
     updater.start_polling()
     updater.idle()
-
-
-if __name__ == "__main__":
-    main()

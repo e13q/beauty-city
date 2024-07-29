@@ -1,7 +1,7 @@
 # import random
 # import uuid
 # from faker import Faker
-from mybot.models import Client, Salon, Service, Specialist, Order, SpecialistWorkDayInSalon, Appointment
+from datacenter.models import Client, Salon, Service, Specialist, Order, SpecialistWorkDayInSalon, Appointment
 
 
 # # # ! запуск через PowerShell команда - >>> exec(open("db_fake_data_fill.py", encoding="utf-8").read())

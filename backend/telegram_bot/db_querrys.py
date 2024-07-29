@@ -20,6 +20,45 @@ def get_all_services():
     return Service.objects.all()
 
 
+def get_services_by_workdays(workdays):
+    if not workdays:
+        return None
+    services_list = []
+    for workday in workdays:
+        [services_list.append(
+            service.id
+        ) for service in workday.services.all()]
+    services_list = list(dict.fromkeys(services_list))
+    services_arr = []
+    for service_id in services_list:
+        service = get_service(service_id)
+        services_arr.append({
+            'id': service_id, 'title': service.title, 'price': service.price
+            }
+        )
+    return services_arr
+
+
+def get_services_by_specialist(specialist_id):
+    date = dt.datetime.now()
+    specialist = get_specialist(specialist_id)
+    workdays = SpecialistWorkDayInSalon.objects.filter(
+        specialist=specialist,
+        workday__range=(date, date + dt.timedelta(days=7)),
+    )
+    return get_services_by_workdays(workdays)
+
+
+def get_services_by_salon(salon_id):
+    date = dt.datetime.now()
+    salon = get_salon(salon_id)
+    workdays = SpecialistWorkDayInSalon.objects.filter(
+        salon=salon,
+        workday__range=(date, date + dt.timedelta(days=7)),
+    )
+    return get_services_by_workdays(workdays)
+
+
 def get_service(id):
     return Service.objects.get(pk=id)
 
@@ -68,10 +107,10 @@ def is_time_slot_busy(time_slot, appointments, service_duration):
     return False
 
 
-def get_salons_and_times(service, date, salon=None, specialist=None):
+def get_salons_and_times(service, salon=None, specialist=None):
+    date = dt.datetime.now()
     if salon:
         specialist_duties = SpecialistWorkDayInSalon.objects.filter(
-            specialist=specialist,
             services=service,
             workday__range=(date, date + dt.timedelta(days=7)),
             salon=salon

@@ -1,4 +1,3 @@
-import datetime as dt
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
     CallbackContext,
@@ -11,6 +10,8 @@ from .db_querrys import get_all_services, get_service, get_salons_and_times
 
 # ----------------------Старт первой линии действий----------------------
 def list_services(update: Update, context: CallbackContext):
+    context.user_data["salon_id"] = None
+    context.user_data["specialist_id"] = None
     # Отображаем список процедур
     query = update.callback_query
     query.answer()
@@ -41,11 +42,10 @@ def list_salons_by_service(update: Update, context: CallbackContext):
     service_id = int(context.user_data["service_id"])
     service = get_service(service_id)
     context.user_data["service"] = service
-    date = dt.date.today()
     (
         context.user_data["salons_dates_times"],
         context.user_data["salons_address"],
-    ) = get_salons_and_times(service=service, date=date)
+    ) = get_salons_and_times(service=service)
     if not context.user_data["salons_dates_times"]:
         show_cant_add(update)
         return None

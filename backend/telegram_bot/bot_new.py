@@ -8,7 +8,9 @@ from telegram.ext import (
     CallbackContext
 )
 
-from .start_from_service import handlers_register as st_proc_handlers
+from .start_from_service import handlers_register as st_service_handlers
+from .start_from_salons import handlers_register as st_salons_handlers
+from .start_from_specialists import handlers_register as st_specialists_handlers
 from .common_handler_functions import (
     service_handler, salon_handler, specialists_handler)
 
@@ -75,6 +77,8 @@ def main():
             pattern="^specialist_id_"
         )
     )
-    updater.dispatcher = st_proc_handlers(updater)
+    updater.dispatcher = st_service_handlers(updater)
+    updater.dispatcher = st_salons_handlers(updater)
+    updater.dispatcher = st_specialists_handlers(updater)
     updater.start_polling()
     updater.idle()

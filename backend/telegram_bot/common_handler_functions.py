@@ -4,7 +4,12 @@ from telegram.ext import (
 from telegram import Update
 # import start_from_salons
 from .start_from_service import list_salons_by_service
+from .start_from_salons import (
+    list_services_by_salon,
+    list_salon_free_time_slots
+)
 from .start_from_specialists import list_salons_free_time_slots
+from .start_from_specialists import list_services_by_specialist
 
 
 def service_handler(update: Update, context: CallbackContext):
@@ -16,9 +21,8 @@ def service_handler(update: Update, context: CallbackContext):
     if context.user_data.get("specialist_id"):
         list_salons_free_time_slots(update, context)
     elif context.user_data.get("salon_id"):
-        None
-        # start_from_salons.list_specialsts_by_salon_procedure(update, context)
-    else:
+        list_salon_free_time_slots(update, context)
+    elif context:
         list_salons_by_service(update, context)
 
 
@@ -27,6 +31,7 @@ def salon_handler(update: Update, context: CallbackContext):
     query.answer()
     salon_id = query.data.split("_")[-1]
     context.user_data["salon_id"] = salon_id
+    list_services_by_salon(update, context)
     # list_services(update, context)
 
 
@@ -35,4 +40,4 @@ def specialists_handler(update: Update, context: CallbackContext):
     query.answer()
     specialist_id = query.data.split("_")[-1]
     context.user_data["specialist_id"] = specialist_id
-    # list_services(update, context)
+    list_services_by_specialist(update, context)

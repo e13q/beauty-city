@@ -1,12 +1,12 @@
 import datetime as dt
-from datacenter.models import (
-    Service
-)
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import (
     CallbackContext,
+    CallbackQueryHandler,
+    Updater
 )
-from .common import get_salons_and_times
+
+from .db_querrys import get_all_services, get_service, get_salons_and_times
 
 
 # ----------------------Старт первой линии действий----------------------
@@ -14,12 +14,12 @@ def list_services(update: Update, context: CallbackContext):
     # Отображаем список процедур
     query = update.callback_query
     query.answer()
-    services = Service.objects.all()
+    services = get_all_services()
     keyboard = [
         [
             InlineKeyboardButton(
                 f"{service.title} - {service.price} руб.",
-                callback_data=f"service_{service.id}",
+                callback_data=f"service_id_{service.id}",
             )
         ] for service in services
     ]
@@ -37,9 +37,9 @@ def show_cant_add(update):
     )
 
 
-def list_salons_by_procedure(update: Update, context: CallbackContext):
+def list_salons_by_service(update: Update, context: CallbackContext):
     service_id = int(context.user_data["service_id"])
-    service = Service.objects.get(pk=service_id)
+    service = get_service(service_id)
     context.user_data["service"] = service
     date = dt.date.today()
     (
@@ -69,7 +69,7 @@ def list_salons_by_procedure(update: Update, context: CallbackContext):
     context.user_data["curr_date"] = context.user_data["all_dates_for_salon"][
         context.user_data["curr_date_index"]
     ]
-    list_salons_by_procedure_time_by_time(update, context)
+    list_salons_by_service_time_by_time(update, context)
     # context.user_data["all_specs"] = [key for key in SAT_by_spec.keys()]
 
 
@@ -87,7 +87,7 @@ def refresh_context_date_change(update: Update, context: CallbackContext):
     context.user_data["curr_date"] = context.user_data["all_dates_for_salon"][
         context.user_data["curr_date_index"]
     ]
-    list_salons_by_procedure_time_by_time(update, context)
+    list_salons_by_service_time_by_time(update, context)
 
 
 def refresh_context_salon_change(update: Update, context: CallbackContext):
@@ -106,7 +106,7 @@ def refresh_context_salon_change(update: Update, context: CallbackContext):
     context.user_data["curr_date"] = context.user_data["all_dates_for_salon"][
         context.user_data["curr_date_index"]
     ]
-    list_salons_by_procedure_time_by_time(update, context)
+    list_salons_by_service_time_by_time(update, context)
 
 
 def service_update_salon_up(update: Update, context: CallbackContext):
@@ -119,7 +119,7 @@ def service_update_salon_down(update: Update, context: CallbackContext):
     refresh_context_salon_change(update, context)
 
 
-def list_salons_by_procedure_time_by_time(
+def list_salons_by_service_time_by_time(
         update: Update, context: CallbackContext):
     service = context.user_data["service"]
     work_date = context.user_data["curr_date"]
@@ -173,7 +173,7 @@ def list_salons_by_procedure_time_by_time(
             key_next_salon
         ])
     keyboard.append([InlineKeyboardButton(
-        "Назад", callback_data="back_to_serv_")])
+        "Назад", callback_data="list_services")])
     all_salons = ''.join([salon for salon in context.user_data["all_salons"]])
     all_dates_for_salon = ''.join(
         [date for date in context.user_data["all_dates_for_salon"]])
@@ -188,3 +188,40 @@ def list_salons_by_procedure_time_by_time(
 \n{work_date}\n{salon_title}\n{salon_address}\n""",
         reply_markup=InlineKeyboardMarkup(keyboard),
     )
+
+
+def handlers_register(updater: Updater):
+    updater.dispatcher.add_handler(
+        CallbackQueryHandler(list_services, pattern="^list_services$")
+    )
+    updater.dispatcher.add_handler(
+        CallbackQueryHandler(
+            list_services,
+            pattern="^back_to_serv_"
+        )
+    )
+    updater.dispatcher.add_handler(
+        CallbackQueryHandler(
+            service_update_date_up,
+            pattern="^date_up_"
+        )
+    )
+    updater.dispatcher.add_handler(
+        CallbackQueryHandler(
+            service_update_date_down,
+            pattern="^date_down_"
+        )
+    )
+    updater.dispatcher.add_handler(
+        CallbackQueryHandler(
+            service_update_salon_up,
+            pattern="^salon_up_"
+        )
+    )
+    updater.dispatcher.add_handler(
+        CallbackQueryHandler(
+            service_update_salon_down,
+            pattern="^salon_down_"
+        )
+    )
+    return updater.dispatcher

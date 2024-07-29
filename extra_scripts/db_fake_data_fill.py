@@ -215,7 +215,7 @@ order3 = Order.objects.get(client=client3)
 
 # Создание рабочих днейг
 workday1 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-07-27",
+    workday="2024-07-28",
     salon=salon1,
     specialist=specialist1,
     start_at='08:00',
@@ -224,7 +224,7 @@ workday1 = SpecialistWorkDayInSalon.objects.create(
 workday1.services.add(service_1, service_2)
 
 workday2 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-07-29",
+    workday="2024-07-30",
     salon=salon2,
     specialist=specialist1,
     start_at='07:00',
@@ -233,7 +233,7 @@ workday2 = SpecialistWorkDayInSalon.objects.create(
 workday2.services.add(service_2)
 
 workday3 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-07-30",
+    workday="2024-08-03",
     salon=salon3,
     specialist=specialist1,
     start_at='08:00',
@@ -242,7 +242,7 @@ workday3 = SpecialistWorkDayInSalon.objects.create(
 workday3.services.add(service_2, service_6, service_7)
 
 workday4 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-07-27",
+    workday="2024-08-05",
     salon=salon1,
     specialist=specialist2,
     start_at='08:00',
@@ -251,7 +251,7 @@ workday4 = SpecialistWorkDayInSalon.objects.create(
 workday4.services.add(service_1, service_6, service_2)
 
 workday5 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-07-29",
+    workday="2024-08-12",
     salon=salon2,
     specialist=specialist2,
     start_at='07:00',
@@ -260,7 +260,7 @@ workday5 = SpecialistWorkDayInSalon.objects.create(
 workday5.services.add(service_2, service_3, service_7)
 
 workday6 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-07-31",
+    workday="2024-08-01",
     salon=salon3,
     specialist=specialist2,
     start_at='08:00',
@@ -269,7 +269,7 @@ workday6 = SpecialistWorkDayInSalon.objects.create(
 workday6.services.add(service_2, service_5, service_7)
 
 workday7 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-08-01",
+    workday="2024-08-02",
     salon=salon1,
     specialist=specialist3,
     start_at='08:00',
@@ -278,7 +278,7 @@ workday7 = SpecialistWorkDayInSalon.objects.create(
 workday7.services.add(service_1, service_2)
 
 workday8 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-07-27",
+    workday="2024-08-10",
     salon=salon2,
     specialist=specialist3,
     start_at='07:00',
@@ -287,7 +287,7 @@ workday8 = SpecialistWorkDayInSalon.objects.create(
 workday8.services.add(service_2, service_4, service_7)
 
 workday9 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-07-28",
+    workday="2024-07-29",
     salon=salon3,
     specialist=specialist3,
     start_at='08:00',
@@ -296,7 +296,7 @@ workday9 = SpecialistWorkDayInSalon.objects.create(
 workday9.services.add(service_4, service_5, service_7)
 
 workday10 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-08-01",
+    workday="2024-08-02",
     salon=salon1,
     specialist=specialist4,
     start_at='08:00',
@@ -305,7 +305,7 @@ workday10 = SpecialistWorkDayInSalon.objects.create(
 workday10.services.add(service_6, service_1)
 
 workday11 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-10-27",
+    workday="2024-10-28",
     salon=salon2,
     specialist=specialist4,
     start_at='07:00',
@@ -314,7 +314,7 @@ workday11 = SpecialistWorkDayInSalon.objects.create(
 workday11.services.add(service_2, service_3, service_7, service_5)
 
 workday12 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-11-28",
+    workday="2024-11-29",
     salon=salon3,
     specialist=specialist4,
     start_at='08:00',
@@ -323,7 +323,7 @@ workday12 = SpecialistWorkDayInSalon.objects.create(
 workday12.services.add(service_4)
 
 workday13 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-07-27",
+    workday="2024-07-28",
     salon=salon1,
     specialist=specialist5,
     start_at='08:00',
@@ -332,7 +332,7 @@ workday13 = SpecialistWorkDayInSalon.objects.create(
 workday13.services.add(service_1, service_2)
 
 workday14 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-07-29",
+    workday="2024-07-30",
     salon=salon2,
     specialist=specialist5,
     start_at='07:00',
@@ -341,7 +341,7 @@ workday14 = SpecialistWorkDayInSalon.objects.create(
 workday14.services.add(service_2, service_6)
 
 workday15 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-07-30",
+    workday="2024-07-31",
     salon=salon3,
     specialist=specialist5,
     start_at='08:00',
@@ -350,7 +350,7 @@ workday15 = SpecialistWorkDayInSalon.objects.create(
 workday15.services.add(service_2, service_6, service_7)
 
 workday16 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-07-27",
+    workday="2024-07-28",
     salon=salon1,
     specialist=specialist6,
     start_at='08:00',
@@ -359,7 +359,7 @@ workday16 = SpecialistWorkDayInSalon.objects.create(
 workday16.services.add(service_1, service_2)
 
 workday17 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-07-29",
+    workday="2024-07-30",
     salon=salon2,
     specialist=specialist6,
     start_at='07:00',
@@ -368,7 +368,7 @@ workday17 = SpecialistWorkDayInSalon.objects.create(
 workday17.services.add(service_2)
 
 workday18 = SpecialistWorkDayInSalon.objects.create(
-    workday="2024-07-30",
+    workday="2024-07-31",
     salon=salon3,
     specialist=specialist6,
     start_at='08:00',

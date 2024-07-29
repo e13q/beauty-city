@@ -36,7 +36,9 @@ def get_first_time_slot(duty):
     time_now_hour = dt.datetime.now().hour
     time_now_minute = dt.datetime.now().minute
     if time_now_minute > 30:
-        time_now = dt.datetime.now() + dt.timedelta(hours=1)
+        time_now = dt.datetime.combine(
+            dt.date.today(), dt.time(time_now_hour + 1, 0)
+        )
     else:
         time_now = dt.datetime.combine(
             dt.date.today(), dt.time(time_now_hour, 30)
@@ -49,7 +51,7 @@ def get_first_time_slot(duty):
     elif duty_start_time <= time_now < duty_end_time:
         first_time_slot = time_now
     else:
-        first_time_slot = dt.timedelta(seconds=0)
+        first_time_slot = None
 
     return first_time_slot
 
@@ -102,13 +104,14 @@ def get_salons_and_times(service, date, salon=None, specialist=None):
         duty_end_time = dt.datetime.combine(duty.workday, duty.end_at)
         free_time_slots = []
         time_slot = get_first_time_slot(duty)
-        while time_slot + service_duration < duty_end_time:
-            if not is_time_slot_busy(
-                    time_slot, appointments, service_duration
-            ):
-                free_time_slots.append(
-                    f"{time_slot.hour:02}:{time_slot.minute:02}")
-            time_slot += service_duration
+        if not time_slot:
+            while time_slot + service_duration < duty_end_time:
+                if not is_time_slot_busy(
+                        time_slot, appointments, service_duration
+                ):
+                    free_time_slots.append(
+                        f"{time_slot.hour:02}:{time_slot.minute:02}")
+                time_slot += service_duration
         context_salons[salon.title] = salon.address
         if not context.get(salon.title):
             context[salon.title] = {

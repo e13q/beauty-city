@@ -12,6 +12,7 @@ pip install -r requirements.txt
 
 ```
 Для корректной работы потребуется файл .env
+
 Пример:
 ```
 BOT_TOKEN = '' - токен, полученный от BotFather
@@ -24,6 +25,20 @@ CROSS_OR = '["http://*.fvds.ru", "http://*.78.20.200.143"]' - допустимы
 Также, для взаимодействия с админ-панелью необходимо создать запись:
 
 `python3 backend/manage.py createsuperuser'`
+
+### Команды запуска
+
+Команда для запуска бота
+```
+python3 backend/manage.py runbot
+```
+
+Команда для запуска сервера
+
+Локальный запуск
+```
+python3 backend/manage.py runserver
+```
 
 ### Цель проекта
 

@@ -41,7 +41,7 @@ python3 backend/manage.py runbot
 ```
 python3 backend/manage.py runserver
 ```
-Для деплоя проекта рекомендуем ознакомиться с (данной)[https://docs.djangoproject.com/en/5.0/howto/deployment/] статьей.
+Для деплоя проекта рекомендуем ознакомиться с [данной](https://docs.djangoproject.com/en/5.0/howto/deployment/) статьей.
 
 ### Цель проекта
 

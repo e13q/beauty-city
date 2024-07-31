@@ -1,11 +1,12 @@
 import datetime as dt
+
 from datacenter.models import (
-    Client,
-    Service,
-    Salon,
-    Specialist,
     Appointment,
-    SpecialistWorkDayInSalon
+    Client,
+    Salon,
+    Service,
+    Specialist,
+    SpecialistWorkDayInSalon,
 )
 
 
@@ -58,7 +59,7 @@ def get_services_by_workdays(workdays):
 
 
 def get_services_by_specialist(specialist_id):
-    date = dt.datetime.now()
+    date = dt.date.today()
     specialist = get_specialist(specialist_id)
     workdays = SpecialistWorkDayInSalon.objects.filter(
         specialist=specialist,
@@ -68,7 +69,7 @@ def get_services_by_specialist(specialist_id):
 
 
 def get_services_by_salon(salon_id):
-    date = dt.datetime.now()
+    date = dt.date.today()
     salon = get_salon(salon_id)
     workdays = SpecialistWorkDayInSalon.objects.filter(
         salon=salon,
@@ -126,7 +127,7 @@ def is_time_slot_busy(time_slot, appointments, service_duration):
 
 
 def get_salons_and_times(service, salon=None, specialist=None):
-    date = dt.datetime.now()
+    date = dt.date.today()
     if salon:
         specialist_duties = SpecialistWorkDayInSalon.objects.filter(
             services=service,
@@ -149,21 +150,20 @@ def get_salons_and_times(service, salon=None, specialist=None):
     context = dict()
     context_salons = dict()
     for duty in specialist_duties:
-        if not specialist:
-            specialist = duty.specialist
-        if not salon:
-            salon = duty.salon
+        specialist = duty.specialist
+        salon = duty.salon
+        date=duty.workday
         appointments = Appointment.objects.filter(
             specialist=specialist,
             service=service,
-            date=duty.workday,
+            date=date,
             salon=salon
         ).exclude(status__in=["discard", "ended"])
         duty_end_time = dt.datetime.combine(duty.workday, duty.end_at)
         free_time_slots = []
         time_slot = get_first_time_slot(duty)
         if time_slot:
-            while time_slot + service_duration < duty_end_time:
+            while time_slot + service_duration <= duty_end_time:
                 if not is_time_slot_busy(
                         time_slot, appointments, service_duration
                 ):

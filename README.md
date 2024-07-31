@@ -33,6 +33,10 @@ CROSS_OR = '["http://*.fvds.ru", "http://*.78.20.200.143"]' # допустимы
 
 `python3 backend/manage.py createsuperuser`
 
+Заполнить базу данных для проверки можно также, воспользовавшись скриптом по пути extra_scripts/db_fake_data_fill.py
+Его содержимое необходимо перенести в командную строку после её запуска по команде
+
+`python3 backend/manage.py shell`
 
 ### Команды запуска
 

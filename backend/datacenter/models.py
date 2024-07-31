@@ -9,7 +9,7 @@ class Client(models.Model):
         "id в телеграмм", blank=True, null=True, unique=True
     )
     full_name = models.CharField("ФИО", max_length=200)
-    phone_number = PhoneNumberField(null=True, unique=True, region="RU")
+    phone_number = PhoneNumberField(null=True, region="RU")
 
     def __str__(self) -> str:
         return self.full_name
@@ -83,7 +83,7 @@ class Appointment(models.Model):
     """Заказ услуги"""
 
     STATUSES = [
-        ("access", "Принято"),
+        ("accepted", "Принято"),
         ("ended", "Завершено"),
         ("discard", "Отменено"),
     ]
@@ -95,3 +95,6 @@ class Appointment(models.Model):
     service = models.ForeignKey(Service, on_delete=models.PROTECT)
     start_at = models.TimeField()
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
+
+    def __str__(self) -> str:
+        return f"{self.status} {self.date} {self.salon.title} {self.client.full_name}"

@@ -1,6 +1,7 @@
 import datetime as dt
 
 from datacenter.models import (
+    Order,
     Appointment,
     Client,
     Salon,
@@ -10,19 +11,58 @@ from datacenter.models import (
 )
 
 
+def get_specialist_duties(service, date, salon):
+    return SpecialistWorkDayInSalon.objects.filter(
+        services=service, workday=date, salon=salon
+    )
+
+
+def get_appointments_by_filter(specialist, service, date, salon):
+    return Appointment.objects.filter(
+        specialist=specialist,
+        service=service,
+        date=date,
+        salon=salon
+    ).exclude(status__in=["discard", "ended"])
+
+
+def create_order(client):
+    return Order.objects.create(client=client, status="waiting")
+
+
+def create_appointment(date, salon, client, specialist, service, start_at, order):
+    return Appointment.objects.create(
+        status="accepted",
+        date=date,
+        salon=salon,
+        client=client,
+        specialist=specialist,
+        service=service,
+        start_at=start_at,
+        order=order,
+    )
+
+
+def check_and_add_phone_number(id, phone_num):
+    if not Client.objects.filter(id_tg=id, phone_number=phone_num).exists():
+        client = Client.objects.get(id_tg=id)
+        client.phone_number = phone_num
+        client.save()
+
+
 def check_client(id):
-    return Client.objects.filter(id_tg=id).exists()
+    return Client.objects.filter(id_tg__exact=id).exists()
 
 
 def get_client(id):
-    return Client.objects.get(id_tg=id)
+    return Client.objects.get(id_tg__exact=id)
 
 
-def create_client(id, first_name, last_name, username):
+def create_client(id, first_name, last_name, username=None, phone_number=None):
     Client.objects.create(
             id_tg=id,
             full_name=f"{first_name} {last_name} aka {username}",
-            phone_number=None
+            phone_number=phone_number
         )
     return id
 
@@ -33,6 +73,10 @@ def get_all_salons():
 
 def get_salon(id):
     return Salon.objects.get(pk=id)
+
+
+def get_salon_by_title(title):
+    return Salon.objects.get(title__exact=title)
 
 
 def get_all_services():

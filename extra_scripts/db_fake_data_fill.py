@@ -91,7 +91,7 @@ from datacenter.models import Client, Salon, Service, Specialist, Order, Special
 #     services_offered = list(workday.services.all())
 #     for k in range(2):
 #         appointment = {
-#             "status": ['access', 'ended'][1],
+#             "status": ['accepted', 'ended'][1],
 #             "date": workday.workday,
 #             "salon": workday.salon,
 #             "client": client_objects[(i * 3 + k) % len(client_objects)],
@@ -377,9 +377,9 @@ workday18 = SpecialistWorkDayInSalon.objects.create(
 workday18.services.add(service_2, service_6, service_7)
 
 # записи
-Appointment.objects.create(status='access', date='2024-07-30', salon=salon3, client=client1, specialist=specialist6, service=service_1, start_at='10:00', order=order1)
-Appointment.objects.create(status='access', date='2024-07-30', salon=salon3, client=client2, specialist=specialist6, service=service_2, start_at='12:00', order=order2)
-Appointment.objects.create(status='access', date='2024-07-30', salon=salon3, client=client3, specialist=specialist6, service=service_3, start_at='14:00', order=order3)
+Appointment.objects.create(status='accepted', date='2024-07-30', salon=salon3, client=client1, specialist=specialist6, service=service_1, start_at='10:00', order=order1)
+Appointment.objects.create(status='accepted', date='2024-07-30', salon=salon3, client=client2, specialist=specialist6, service=service_2, start_at='12:00', order=order2)
+Appointment.objects.create(status='accepted', date='2024-07-30', salon=salon3, client=client3, specialist=specialist6, service=service_3, start_at='14:00', order=order3)
 Appointment.objects.create(status='ended', date='2024-07-25', salon=salon3, client=client4, specialist=specialist5, service=service_3, start_at='16:00')
 Appointment.objects.create(status='ended', date='2024-07-25', salon=salon3, client=client5, specialist=specialist5, service=service_4, start_at='18:00')
 Appointment.objects.create(status='discard', date='2024-08-01', salon=salon1, client=client6, specialist=specialist4, service=service_1, start_at='10:00')

@@ -1,11 +1,29 @@
 import datetime as dt
 from datacenter.models import (
+    Client,
     Service,
     Salon,
     Specialist,
     Appointment,
     SpecialistWorkDayInSalon
 )
+
+
+def check_client(id):
+    return Client.objects.filter(id_tg=id).exists()
+
+
+def get_client(id):
+    return Client.objects.get(id_tg=id)
+
+
+def create_client(id, first_name, last_name, username):
+    Client.objects.create(
+            id_tg=id,
+            full_name=f"{first_name} {last_name} aka {username}",
+            phone_number=None
+        )
+    return id
 
 
 def get_all_salons():

@@ -30,7 +30,7 @@ SECRET_KEY = env('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = json.loads(env('ALLOWED_HOSTS'))
+ALLOWED_HOSTS = ['127.0.0.1']#json.loads(env('ALLOWED_HOSTS'))
 CSRF_TRUSTED_ORIGINS = json.loads(env('CROSS_OR'))
 CORS_ORIGIN_WHITELIST = json.loads(env('CROSS_OR'))
 
@@ -113,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'RU-ru'
 
-TIME_ZONE = 'UTC+3'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 

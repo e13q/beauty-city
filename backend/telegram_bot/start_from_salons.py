@@ -120,6 +120,7 @@ def list_salons_by_service_time_by_time(
     work_date = context.user_data["curr_date"]
     salon_title = context.user_data["salon"].title
     salon_address = context.user_data["salon"].address
+    context.user_data["curr_salon"] = context.user_data["salon"].title
     time_slots = context.user_data[
         "salon_dates_times"][salon_title][work_date]
     keyboard = [

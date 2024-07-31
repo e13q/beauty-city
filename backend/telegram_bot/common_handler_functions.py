@@ -41,3 +41,18 @@ def specialists_handler(update: Update, context: CallbackContext):
     specialist_id = query.data.split("_")[-1]
     context.user_data["specialist_id"] = specialist_id
     list_services_by_specialist(update, context)
+
+
+def time_handler(update: Update, context: CallbackContext):
+    query = update.callback_query
+    query.answer()
+    time_str = query.data.split("_")[-1]
+    context.user_data["time_str"] = time_str
+    #check_appointment(
+    #    context.user_data["curr_salon"],
+    #    context.user_data["curr_date"],
+    #    context.user_data["time_str"],
+    #    context.user_data["service"],
+    #    context.user_data.get("specialist")
+    #)
+    #get_phone_number(update, context)

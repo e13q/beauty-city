@@ -11,15 +11,18 @@ Python3 должен быть установлен версии ~3.11.9.
 ```
 pip install -r requirements.txt
 ```
-Для реализации проекта вам понадобится Telegram бот. Создать можно через [@BotFather](https://t.me/BotFather). Бот токен выгладит так: `1234567890:XXXxx0Xxx-xxxX0xXXxXxx0X0XX0XXXXxXx`.  
+Для реализации проекта вам понадобится Telegram бот. Создать можно через [@BotFather](https://t.me/BotFather). 
+
+Бот токен выглядит так: `1234567890:XXXxx0Xxx-xxxX0xXXxXxx0X0XX0XXXXxXx`.  
+
 Для корректной работы потребуется файл .env  
 Пример:
 ```
-BOT_TOKEN = '' - токен, полученный от BotFather
-DJANGO_SECRET_KEY = '' - заданный Вами секретный ключ
-DJANGO_DEBUG = True - Включение / Выключение дебаг режима
-ALLOWED_HOSTS = '["127.0.0.1", ".fvds.ru", "78.20.200.143"]' - допустимые адреса для хоста 
-CROSS_OR = '["http://*.fvds.ru", "http://*.78.20.200.143"]' - допустимые переходы с адресов 
+BOT_TOKEN = '' # токен, полученный от BotFather
+DJANGO_SECRET_KEY = '' # заданный Вами секретный ключ
+DJANGO_DEBUG = True # Включение / Выключение дебаг режима
+ALLOWED_HOSTS = '["127.0.0.1", ".fvds.ru", "78.20.200.143"]' # допустимые адреса для хоста 
+CROSS_OR = '["http://*.fvds.ru", "http://*.78.20.200.143"]' # допустимые переходы с адресов 
 ```
 
 Также, для взаимодействия с админ-панелью необходимо создать суперпользователя:
@@ -38,6 +41,7 @@ python3 backend/manage.py runbot
 ```
 python3 backend/manage.py runserver
 ```
+Для деплоя проекта рекомендуем ознакомиться с (данной)[https://docs.djangoproject.com/en/5.0/howto/deployment/] статьей.
 
 ### Цель проекта
 

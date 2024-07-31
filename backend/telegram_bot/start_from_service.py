@@ -127,19 +127,17 @@ def list_salons_by_service_time_by_time(
     salon_address = context.user_data["salons_address"][salon_title]
     time_slots = context.user_data[
         "salons_dates_times"][salon_title][work_date]
-    keyboard = [
-        [InlineKeyboardButton(
-                time_slot, callback_data=f"time_slot_{time_slot}"
-        ) for time_slot in time_slots]
-    ]
+    keyboard = [[InlineKeyboardButton(
+        time_slot, callback_data=f"time_slot_{time_slot}",
+    )] for time_slot in time_slots]
     key_next_date = InlineKeyboardButton(
-        "Следующая дата", callback_data="date_up_")
+        "Следующая дата", callback_data="date_sc_up_")
     key_prev_date = InlineKeyboardButton(
-        "Прошлая дата", callback_data="date_down_")
+        "Прошлая дата", callback_data="date_sc_down_")
     key_next_salon = InlineKeyboardButton(
-        "Следующий адрес", callback_data="salon_up_")
+        "Следующий адрес", callback_data="salon_sc_up_")
     key_prev_salon = InlineKeyboardButton(
-        "Прошлый адрес", callback_data="salon_down_")
+        "Прошлый адрес", callback_data="salon_sc_down_")
     if len(context.user_data["all_dates_for_salon"]) == 1:
         None
     elif context.user_data["curr_date_index"] == 0:
@@ -203,25 +201,25 @@ def handlers_register(updater: Updater):
     updater.dispatcher.add_handler(
         CallbackQueryHandler(
             service_update_date_up,
-            pattern="^date_up_"
+            pattern="^date_sc_up_"
         )
     )
     updater.dispatcher.add_handler(
         CallbackQueryHandler(
             service_update_date_down,
-            pattern="^date_down_"
+            pattern="^date_sc_down_"
         )
     )
     updater.dispatcher.add_handler(
         CallbackQueryHandler(
             service_update_salon_up,
-            pattern="^salon_up_"
+            pattern="^salon_sc_up_"
         )
     )
     updater.dispatcher.add_handler(
         CallbackQueryHandler(
             service_update_salon_down,
-            pattern="^salon_down_"
+            pattern="^salon_sc_down_"
         )
     )
     return updater.dispatcher

@@ -160,11 +160,9 @@ def list_salons_by_service_time_by_time(
     salon_address = context.user_data["salons_address"][salon_title]
     time_slots = context.user_data[
         "salons_dates_times"][salon_title][work_date]
-    keyboard = [
-        [InlineKeyboardButton(
-                time_slot, callback_data=f"time_slot_{time_slot}"
-        ) for time_slot in time_slots]
-    ]
+    keyboard = [[InlineKeyboardButton(
+        time_slot, callback_data=f"time_slot_{time_slot}",
+    )] for time_slot in time_slots]
     key_next_date = InlineKeyboardButton(
         "Следующая дата", callback_data="date_sp_up_")
     key_prev_date = InlineKeyboardButton(

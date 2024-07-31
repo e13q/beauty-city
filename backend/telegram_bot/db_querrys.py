@@ -215,10 +215,11 @@ def get_salons_and_times(service, salon=None, specialist=None):
                         f"{time_slot.hour:02}:{time_slot.minute:02}")
                 time_slot += service_duration
         context_salons[salon.title] = salon.address
-        if not context.get(salon.title):
-            context[salon.title] = {
-                str(duty.workday): free_time_slots
-            }
-        else:
-            context[salon.title].update({str(duty.workday): free_time_slots})
+        if free_time_slots:
+            if not context.get(salon.title):
+                context[salon.title] = {
+                    str(duty.workday): free_time_slots
+                }
+            else:
+                context[salon.title].update({str(duty.workday): free_time_slots})
     return context, context_salons

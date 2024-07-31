@@ -24,7 +24,7 @@ CROSS_OR = '["http://*.fvds.ru", "http://*.78.20.200.143"]' - допустимы
 
 Также, для взаимодействия с админ-панелью необходимо создать суперпользователя:
 
-`python3 backend/manage.py createsuperuser'`
+`python3 backend/manage.py createsuperuser`
 
 ### Команды запуска
 

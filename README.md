@@ -11,8 +11,8 @@ Python3 должен быть установлен версии ~3.11.9.
 ```
 pip install -r requirements.txt
 ```
-Для реализации проекта вам понадобится Telegram бот. Создать можно через [@BotFather](https://t.me/BotFather). Бот токен выгладит так: `1234567890:XXXxx0Xxx-xxxX0xXXxXxx0X0XX0XXXXxXx`.
-Для корректной работы потребуется файл .env
+Для реализации проекта вам понадобится Telegram бот. Создать можно через [@BotFather](https://t.me/BotFather). Бот токен выгладит так: `1234567890:XXXxx0Xxx-xxxX0xXXxXxx0X0XX0XXXXxXx`.  
+Для корректной работы потребуется файл .env  
 Пример:
 ```
 BOT_TOKEN = '' - токен, полученный от BotFather
@@ -33,8 +33,7 @@ CROSS_OR = '["http://*.fvds.ru", "http://*.78.20.200.143"]' - допустимы
 python3 backend/manage.py runbot
 ```
 
-Команда для запуска сервера
-
+Команда для запуска сервера  
 Локальный запуск
 ```
 python3 backend/manage.py runserver
